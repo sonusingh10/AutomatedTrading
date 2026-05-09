@@ -8,7 +8,7 @@ The core idea is to identify trading opportunities by looking for both:
 1.  **Mean Reversion**: Prices tending to return to their historical average.
 2.  **Momentum**: Prices continuing their current trend.
 
-The strategy combines signals from both approaches to generate a final trading decision.
+This revised strategy now **prioritizes strong momentum signals** to better capture upward (and downward) trends.
 
 ## Components
 
@@ -22,16 +22,20 @@ The strategy combines signals from both approaches to generate a final trading d
     -   **Buy Signal**: If the Z-score is significantly negative (price is well below its mean), indicating a potential rebound.
     -   **Sell Signal**: If the Z-score is significantly positive (price is well above its mean), indicating a potential pull-back.
 
-### 3. Momentum Strategy
--   **Concept**: Assumes that existing trends tend to continue.
--   **Mechanism**: Calculates the 20-day percentage change in the `Close` price.
+### 3. Momentum Strategy (Enhanced for Trend Following)
+-   **Concept**: Assumes that existing trends tend to continue, with an emphasis on significant trends.
+-   **Mechanism**: Calculates the **50-day** percentage change in the `Close` price.
 -   **Trading Logic**:
-    -   **Buy Signal**: If the 20-day momentum is positive, indicating an upward trend.
-    -   **Sell Signal**: If the 20-day momentum is negative, indicating a downward trend.
+    -   **Buy Signal**: If the 50-day momentum is **greater than a set threshold (e.g., 5%)**, indicating a strong upward trend.
+    -   **Sell Signal**: If the 50-day momentum is **less than a set negative threshold (e.g., -5%)**, indicating a strong downward trend.
+    -   **Hold**: Otherwise, no momentum-based position is taken.
 
-### 4. Combining Strategies
+### 4. Combining Strategies (Momentum-Prioritized)
 -   The signals from both mean-reversion and momentum strategies are aggregated.
--   A final `combined_position` is determined (Buy, Sell, or Hold) based on the consensus or average of the two individual strategy signals.
+-   **New Logic**:
+    -   If a **strong momentum signal** (above a specific priority threshold, e.g., 4%) is present, it **overrides** any mean-reversion signal, leading to a strong buy (1) or sell (-1).
+    -   If no strong momentum signal is present, the strategy defers to the mean-reversion signal.
+    -   A final `combined_position` is determined (Buy, Sell, or Hold).
 
 ### 5. Backtesting
 -   Simulates the strategy's performance on historical data.
@@ -59,7 +63,7 @@ Here's a visualization of the strategy's cumulative returns compared to a 'Buy a
 ## How to Use
 
 1.  **Run the script**: Execute the Python code in your environment.
-2.  **Adjust Parameters**: Modify the `ticker`, `start_date`, `end_date`, or strategy `window` parameters in the `main()` function to test different assets or periods.
+2.  **Adjust Parameters**: Modify the `ticker`, `start_date`, `end_date`, `momentum_trade_threshold`, and `momentum_priority_threshold` parameters directly in the `main()` function's call in your analysis cell to test different assets or periods.
 3.  **Analyze Results**: Review the printed performance metrics and the cumulative returns plot to evaluate the strategy.
 
 ---

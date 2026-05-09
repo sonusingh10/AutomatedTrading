@@ -44,18 +44,30 @@ def mean_reversion_strategy(data, window=20):
     data['position'] = np.where(data['z_score'] < -1, 1, np.where(data['z_score'] > 1, -1, 0))
     return data
 
-# Momentum strategy
-def momentum_strategy(data, window=20):
+# Momentum strategy (Enhanced for Trend Following)
+def momentum_strategy(data, window=50, momentum_threshold=0.05):
     data['momentum'] = data['Close'].pct_change(periods=window)
     # Set position based on momentum
-    data['position'] = np.where(data['momentum'] > 0, 1, -1)
+    # Buy if momentum > threshold, Sell if momentum < -threshold, else Hold
+    data['position'] = np.where(data['momentum'] > momentum_threshold, 1,
+                                np.where(data['momentum'] < -momentum_threshold, -1, 0))
     return data
 
-# Combine strategies
-def combine_strategies(data):
-    # This function expects 'position_x' and 'position_y' to be present in the DataFrame
-    data['combined_position'] = (data['position_x'] + data['position_y']) / 2
-    data['combined_position'] = data['combined_position'].apply(lambda x: 1 if x > 0 else (-1 if x < 0 else 0))
+# Combine strategies (Momentum-Prioritized)
+def combine_strategies(data, momentum_priority_threshold=0.04):
+    # Assume position_mr from mean-reversion and the raw 'momentum' column are available
+    data['combined_position'] = 0 # Default to neutral
+
+    # Strong positive momentum overrides
+    data.loc[data['momentum'] > momentum_priority_threshold, 'combined_position'] = 1
+    # Strong negative momentum overrides
+    data.loc[data['momentum'] < -momentum_priority_threshold, 'combined_position'] = -1
+
+    # For cases without strong momentum, use mean-reversion signal
+    # Only if combined_position is still 0 (i.e., not overridden by strong momentum)
+    no_strong_momentum_mask = (data['combined_position'] == 0)
+    data.loc[no_strong_momentum_mask, 'combined_position'] = data.loc[no_strong_momentum_mask, 'position_mr']
+
     return data
 
 # Backtest the strategy
@@ -98,11 +110,12 @@ def calculate_win_rate(strategy_returns):
     win_rate = winning_trades / total_trades
     return win_rate
 
-# Main function
-def main():
-    ticker = 'AAPL'
-    end_date = pd.Timestamp.today().strftime('%Y-%m-%d')
-    start_date = (pd.Timestamp.today() - pd.DateOffset(years=5)).strftime('%Y-%m-%d')
+# Main function with tunable parameters
+def main(ticker='MSFT', start_date=None, end_date=None, momentum_window=50, momentum_trade_threshold=0.05, momentum_priority_threshold=0.04):
+    if start_date is None:
+        start_date = (pd.Timestamp.today() - pd.DateOffset(years=5)).strftime('%Y-%m-%d')
+    if end_date is None:
+        end_date = pd.Timestamp.today().strftime('%Y-%m-%d')
 
     # Fetch data
     data = fetch_stock_data(ticker, start_date, end_date)
@@ -111,14 +124,12 @@ def main():
     data = mean_reversion_strategy(data)
     data['position_mr'] = data['position'].copy() # Store mean-reversion position
 
-    data = momentum_strategy(data)
-    data['position_mom'] = data['position'].copy() # Store momentum position
+    # Call momentum_strategy with new parameters
+    data = momentum_strategy(data, window=momentum_window, momentum_threshold=momentum_trade_threshold)
+    data['position_mom'] = data['position'].copy() # Store momentum position (based on new threshold)
 
-    # Assign to position_x and position_y for combine_strategies
-    data['position_x'] = data['position_mr']
-    data['position_y'] = data['position_mom']
-
-    data = combine_strategies(data)
+    # Call combine_strategies with new parameters
+    data = combine_strategies(data, momentum_priority_threshold=momentum_priority_threshold)
 
     # Backtest and get Sharpe Ratio
     data, sharpe_ratio = backtest_strategy(data)
@@ -141,34 +152,35 @@ def main():
     # Calculate Win Rate for the strategy
     strategy_win_rate = calculate_win_rate(data['strategy_returns'])
 
-    # Print results
-    print(f"Investment Period: {start_date} to {end_date}")
-    print(f"Initial Investment: ${initial_investment:.2f}")
-    print(f"
-Strategy Performance:")
-    print(f"Final Value: ${final_value:.2f}")
-    print(f"Profit/Loss: ${profit_loss:.2f}")
-    print(f"Sharpe Ratio: {sharpe_ratio:.4f}")
-    print(f"Maximum Drawdown: {strategy_max_drawdown:.4f}")
-    print(f"Win Rate: {strategy_win_rate:.2%}")
+    # Only print and plot if the script is run directly (not imported as a module)
+    if __name__ == '__main__':
+        print(f"Investment Period: {start_date} to {end_date}")
+        print(f"Initial Investment: ${initial_investment:.2f}")
+        print(f"\nStrategy Performance:")
+        print(f"Final Value: ${final_value:.2f}")
+        print(f"Profit/Loss: ${profit_loss:.2f}")
+        print(f"Sharpe Ratio: {sharpe_ratio:.4f}")
+        print(f"Maximum Drawdown: {strategy_max_drawdown:.4f}")
+        print(f"Win Rate: {strategy_win_rate:.2%}")
 
-    print(f"
-Benchmark (Buy and Hold) Performance:")
-    print(f"Final Value: ${buy_and_hold_final_value:.2f}")
-    print(f"Profit/Loss: ${buy_and_hold_profit_loss:.2f}")
-    print(f"Maximum Drawdown: {buy_and_hold_max_drawdown:.4f}")
+        print(f"\nBenchmark (Buy and Hold) Performance:")
+        print(f"Final Value: ${buy_and_hold_final_value:.2f}")
+        print(f"Profit/Loss: ${buy_and_hold_profit_loss:.2f}")
+        print(f"Maximum Drawdown: {buy_and_hold_max_drawdown:.4f}")
 
-    # Plot results
-    plt.figure(figsize=(12, 6))
-    plt.plot(data['cumulative_returns'], label='Strategy Returns')
-    plt.plot(buy_and_hold_returns, label='Buy and Hold Returns')
-    plt.legend()
-    plt.title('Cumulative Returns: Strategy vs. Buy and Hold')
-    plt.xlabel('Date')
-    plt.ylabel('Cumulative Returns')
-    plt.grid(True)
-    plt.savefig('cumulative_returns.png') # Save the plot to a file
-    plt.show()
+        # Plot results
+        plt.figure(figsize=(12, 6))
+        plt.plot(data['cumulative_returns'], label='Strategy Returns')
+        plt.plot(buy_and_hold_returns, label='Buy and Hold Returns')
+        plt.legend()
+        plt.title('Cumulative Returns: Strategy vs. Buy and Hold')
+        plt.xlabel('Date')
+        plt.ylabel('Cumulative Returns')
+        plt.grid(True)
+        plt.savefig('cumulative_returns.png') # Save the plot to a file
+        plt.show()
+
+    return sharpe_ratio, final_value, data, buy_and_hold_returns, initial_investment
 
 if __name__ == '__main__':
     main()
