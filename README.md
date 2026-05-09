@@ -77,3 +77,11 @@ This project serves as an automated framework to backtest and optimize a hybrid 
 | TSLA     | $10,000.00           | $6,459.00     | $-3,541.00        | -35.41%            | -8.37%      | 0.00%              |         0.1356 |
 | AMD      | $10,000.00           | $7,553.00     | $-2,447.00        | -24.47%            | -5.46%      | 18.24%             |         0.1728 |
 | META     | $10,000.00           | $27,445.00    | $17,445.00        | 174.45%            | 22.37%      | 103.03%            |         0.6924 |
+
+## Automation Instructions
+
+This repository is configured with **GitHub Actions** to run the risk management report automatically.
+
+- **Schedule**: The report runs every weekday at 9:00 AM EST (14:00 UTC).
+- **Output**: The results are saved to `daily_risk_report.csv` and committed to the `master` branch.
+- **Manual Run**: You can manually trigger the report via the **Actions** tab in your GitHub repository by selecting 'Daily Risk Report' and clicking 'Run workflow'.
