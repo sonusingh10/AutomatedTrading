@@ -167,6 +167,7 @@ Benchmark (Buy and Hold) Performance:")
     plt.xlabel('Date')
     plt.ylabel('Cumulative Returns')
     plt.grid(True)
+    plt.savefig('cumulative_returns.png') # Save the plot to a file
     plt.show()
 
 if __name__ == '__main__':

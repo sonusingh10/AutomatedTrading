@@ -50,6 +50,12 @@ The script calculates and displays the following metrics for both the custom str
 -   **Maximum Drawdown**: The largest percentage drop from a peak to a trough in the portfolio value, indicating potential risk.
 -   **Win Rate**: The percentage of trading days where the strategy generated a positive return.
 
+## Cumulative Returns Plot
+
+Here's a visualization of the strategy's cumulative returns compared to a 'Buy and Hold' approach:
+
+![Cumulative Returns](cumulative_returns.png)
+
 ## How to Use
 
 1.  **Run the script**: Execute the Python code in your environment.
