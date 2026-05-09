@@ -128,3 +128,18 @@ To refine risk management, we analyzed the frequency of statistical outliers ove
 * **NVDA & TSLA**: Increasing the threshold to 3-Sigma resulted in a **100% reduction** in flagged anomalies, indicating that recent price swings were within the statistical 'expected' range (99.7% confidence).
 * **AMD & META**: These assets still triggered 3-Sigma events, confirming the presence of significant 'black swan' movements that require active risk mitigation.
 * **Strategic Recommendation**: For highly volatile assets like AMD (Avg Vol: 5.8%), a 3-Sigma threshold is recommended to avoid over-trading on noise.
+
+## Advanced Risk Management: 3-Sigma Strategy
+
+To improve the robustness of the trading engine, we have implemented a **3-Sigma (99.7% confidence)** threshold for volatility monitoring and anomaly detection.
+
+### Return Stability Analysis
+We utilize z-score analysis on a rolling 30-day window to identify significant price deviations. This allows the system to distinguish between routine market noise and structural price shifts.
+
+- **30-Day Stability Monitoring**: Uses 2-sigma and 3-sigma bands to visualize return distributions.
+- **Anomaly Mitigation**: Assets that frequently trigger 3-sigma events (like AMD and META) are flagged for tighter stop-loss controls, while stable assets (like NVDA and TSLA) operate under standard optimized parameters.
+
+![Return Stability Analysis](return_stability_analysis.png)
+
+### Strategy Implementation
+The logic for this analysis is encapsulated in `stability_analysis.py`, which provides automated reporting on return distributions and outliers.
