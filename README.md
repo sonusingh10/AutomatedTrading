@@ -33,3 +33,12 @@ sharpe, value, data, bnh, init = trading_strategy.main(
     momentum_priority_threshold=0.02
 )
 ```
+
+## Final Optimized Parameter Summary
+| Ticker   |   Trade Threshold |   Priority Threshold |   Sharpe Ratio |
+|:---------|------------------:|---------------------:|---------------:|
+| NFLX     |             0.005 |                 0.02 |         0.8386 |
+| NVDA     |             0.01  |                 0.02 |         0.4395 |
+| TSLA     |             0.01  |                 0.04 |         0.1356 |
+| AMD      |             0.01  |                 0.02 |         0.1728 |
+| META     |             0.01  |                 0.06 |         0.6924 |
