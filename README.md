@@ -97,3 +97,34 @@ This repository is configured with **GitHub Actions** to run the risk management
 | TSLA     |          -6.56 |
 
 ![30D Performance](recent_30d_performance.png)
+
+## Recent 30-Day Performance Backtest
+
+| Ticker   |   30D Return % |
+|:---------|---------------:|
+| NFLX     |          -5.28 |
+| META     |           1.17 |
+| NVDA     |          -1.98 |
+| AMD      |           2    |
+| TSLA     |          -6.56 |
+
+![30D Performance](recent_30d_performance.png)
+
+
+## Statistical Anomaly Detection (2-Sigma vs 3-Sigma)
+
+To refine risk management, we analyzed the frequency of statistical outliers over the last 30 days. This helps determine whether trade signals are triggered by routine volatility (Noise) or significant structural price shifts (Signals).
+
+### Impact of Increasing Threshold to 3-Sigma:
+| Ticker   |   2-Sigma Anomalies (95%) |   3-Sigma Anomalies (99.7%) | Reduction (%)   |
+|:---------|--------------------------:|----------------------------:|:----------------|
+| NFLX     |                         1 |                           1 | 0.0%            |
+| META     |                         2 |                           1 | 50.0%           |
+| NVDA     |                         3 |                           0 | 100.0%          |
+| AMD      |                         2 |                           1 | 50.0%           |
+| TSLA     |                         1 |                           0 | 100.0%          |
+
+**Key Observations:**
+* **NVDA & TSLA**: Increasing the threshold to 3-Sigma resulted in a **100% reduction** in flagged anomalies, indicating that recent price swings were within the statistical 'expected' range (99.7% confidence).
+* **AMD & META**: These assets still triggered 3-Sigma events, confirming the presence of significant 'black swan' movements that require active risk mitigation.
+* **Strategic Recommendation**: For highly volatile assets like AMD (Avg Vol: 5.8%), a 3-Sigma threshold is recommended to avoid over-trading on noise.
