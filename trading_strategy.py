@@ -142,7 +142,7 @@ def main(ticker='MSFT', start_date=None, end_date=None, momentum_window=50, mome
 
     # Calculate Buy and Hold returns for comparison
     buy_and_hold_returns = (1 + data['returns']).cumprod()
-    buy_and_hold_final_value = initial_investment * buy_and_hold_returns.iloc[-1] if not buy_and_hold_returns.empty and not buy_and_hold_returns.isnull().all() else initial_investment
+    buy_and_hold_final_value = initial_investment * buy_and_hold_returns.iloc[-1] if not buy_and_hold_returns.empty and not data['cumulative_returns'].isnull().all() else initial_investment
     buy_and_hold_profit_loss = buy_and_hold_final_value - initial_investment
 
     # Calculate Max Drawdown for both strategies
@@ -156,14 +156,16 @@ def main(ticker='MSFT', start_date=None, end_date=None, momentum_window=50, mome
     if __name__ == '__main__':
         print(f"Investment Period: {start_date} to {end_date}")
         print(f"Initial Investment: ${initial_investment:.2f}")
-        print(f"\nStrategy Performance:")
+        print(f"
+Strategy Performance:")
         print(f"Final Value: ${final_value:.2f}")
         print(f"Profit/Loss: ${profit_loss:.2f}")
         print(f"Sharpe Ratio: {sharpe_ratio:.4f}")
         print(f"Maximum Drawdown: {strategy_max_drawdown:.4f}")
         print(f"Win Rate: {strategy_win_rate:.2%}")
 
-        print(f"\nBenchmark (Buy and Hold) Performance:")
+        print(f"
+Benchmark (Buy and Hold) Performance:")
         print(f"Final Value: ${buy_and_hold_final_value:.2f}")
         print(f"Profit/Loss: ${buy_and_hold_profit_loss:.2f}")
         print(f"Maximum Drawdown: {buy_and_hold_max_drawdown:.4f}")
