@@ -57,3 +57,13 @@ This project serves as an automated framework to backtest and optimize a hybrid 
 * **Look-ahead Bias**: This backtest uses adjusted closing prices; real-world execution may vary due to slippage and transaction costs.
 * **Diversification**: While individual strategies show 'Alpha', combining them into the 'Equal-Weighted Portfolio' helps smooth out the volatility of single-asset failure (e.g., the high drawdowns seen in TSLA or AMD).
 * **Signal Priority**: In this model, strong momentum overrides mean reversion. Always verify if a stock is trending before betting on a reversal.
+
+## Final Portfolio Performance (5-Year Backtest)
+
+| Ticker   | Total Return   | CAGR (5Y)   | Final Value   |   Sharpe Ratio |
+|:---------|:---------------|:------------|:--------------|---------------:|
+| NFLX     | 279.52%        | 30.57%      | $37,952.00    |         0.8386 |
+| NVDA     | 60.64%         | 9.94%       | $16,064.00    |         0.4395 |
+| TSLA     | -35.41%        | -8.37%      | $6,459.00     |         0.1356 |
+| AMD      | -24.47%        | -5.46%      | $7,553.00     |         0.1728 |
+| META     | 174.45%        | 22.37%      | $27,445.00    |         0.6924 |
