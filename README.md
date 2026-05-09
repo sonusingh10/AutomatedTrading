@@ -85,3 +85,15 @@ This repository is configured with **GitHub Actions** to run the risk management
 - **Schedule**: The report runs every weekday at 9:00 AM EST (14:00 UTC).
 - **Output**: The results are saved to `daily_risk_report.csv` and committed to the `master` branch.
 - **Manual Run**: You can manually trigger the report via the **Actions** tab in your GitHub repository by selecting 'Daily Risk Report' and clicking 'Run workflow'.
+
+## Recent 30-Day Performance Backtest
+
+| Ticker   |   30D Return % |
+|:---------|---------------:|
+| NFLX     |          -5.28 |
+| META     |           1.17 |
+| NVDA     |          -1.98 |
+| AMD      |           2    |
+| TSLA     |          -6.56 |
+
+![30D Performance](recent_30d_performance.png)
